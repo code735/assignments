@@ -39,11 +39,15 @@
 
   Testing the server - run `npm run test-todoServer` command in terminal
  */
-  const express = require('express');
-  const bodyParser = require('body-parser');
-  
-  const app = express();
-  
-  app.use(bodyParser.json());
-  
-  module.exports = app;
+ // import dependencies
+const express = require("express")
+// Create a new express application object
+const app = express()
+//Routes
+app.get("/todos", (req, res) => {
+    res.send("Hello")
+})
+// run your application, so it listens on port 4444
+app.listen(3000, () => {
+    console.log("Server is Listening on port 4444")
+})
