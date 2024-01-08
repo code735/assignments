@@ -41,13 +41,77 @@
  */
  // import dependencies
 const express = require("express")
+const bodyParser = require('body-parser');
 // Create a new express application object
 const app = express()
+
+app.use(bodyParser.json());
+
+
+
 //Routes
+
+let todos = [];
+
 app.get("/todos", (req, res) => {
-    res.send("Hello")
+    res.status(200).json(todos)
 })
+
+app.post('/todos', (req, res) => {
+  console.log('req',req.body)
+  const newTodo = {
+    id: Math.floor(Math.random() * 1000000),
+    title: req.body?.title,
+    description: req.body?.description
+  };
+  todos.push(newTodo);
+  res.status(201).json(newTodo);
+});
+
+app.get("/todos/:id", (req, res) => {
+  let todoIdx=null;
+  todos.map((el,index)=>{
+    if(req.params.id == el.id) todoIdx = index;
+  })
+  if(todoIdx == null) res.status(404).send("404 Not Found")
+  res.status(200).json(todos[todoIdx])
+})
+
+app.put("/todos/:id", (req, res) => {
+  let todoIdx;
+  todos.map((el,index)=>{
+    if(req.params.id == el.id) todoIdx = index;
+  })
+  todos[todoIdx] = {...todos[todoIdx],...req.body}
+
+  let updatedTodo = todos[todoIdx];
+
+  console.log(todos)
+  res.status(200).json(updatedTodo)
+})
+
+app.delete("/todos/:id", (req, res) => {
+  let todoIdx;
+  todos.map((el,index)=>{
+    if(req.params.id == el.id) todoIdx = index;
+  })
+
+  todos.splice(todoIdx, 1);
+
+  let updatedTodo = todos[todoIdx];
+
+  res.status(200).json(updatedTodo)
+})
+
+  // for all other routes, return 404
+  app.use((req, res, next) => {
+    res.status(404).send("404 Not Found");
+  });
+  
+  module.exports = app;
+
+
 // run your application, so it listens on port 4444
-app.listen(3000, () => {
-    console.log("Server is Listening on port 4444")
-})
+// app.listen(3000, () => {
+//     console.log("Server is Listening on port 3000")
+// })
